@@ -13,6 +13,7 @@ import UIKit
     var underlyingImage: UIImage! { get }
     var caption: String? { get }
     var contentMode: UIView.ContentMode { get set }
+    var imageFetched: Bool { get set }
     func loadUnderlyingImageAndNotify()
     func checkCache()
 }
@@ -25,6 +26,7 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
     open var contentMode: UIView.ContentMode = .scaleAspectFill
     open var shouldCachePhotoURLImage: Bool = false
     open var photoURL: String!
+    open var imageFetched: Bool = false
 
     override init() {
         super.init()
@@ -57,10 +59,12 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
         if SKCache.sharedCache.imageCache is SKRequestResponseCacheable {
             let request = URLRequest(url: URL(string: photoURL)!)
             if let img = SKCache.sharedCache.imageForRequest(request) {
+                self.imageFetched = true
                 underlyingImage = img
             }
         } else {
             if let img = SKCache.sharedCache.imageForKey(photoURL) {
+                self.imageFetched = true
                 underlyingImage = img
             }
         }
@@ -84,6 +88,7 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
                 }
 
                 if let data = data, let response = response, let image = UIImage(data: data) {
+                    self.imageFetched = true
                     if self.shouldCachePhotoURLImage {
                         if SKCache.sharedCache.imageCache is SKRequestResponseCacheable {
                             SKCache.sharedCache.setImageData(data, response: response, request: task?.originalRequest)

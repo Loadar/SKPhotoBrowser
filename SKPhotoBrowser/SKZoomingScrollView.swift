@@ -13,7 +13,7 @@ open class SKZoomingScrollView: UIScrollView {
     var photo: SKPhotoProtocol! {
         didSet {
             imageView.image = nil
-            if photo != nil && photo.underlyingImage != nil {
+            if photo != nil && photo.underlyingImage != nil && photo.imageFetched {
                 displayImage(complete: true)
                 return
             }
